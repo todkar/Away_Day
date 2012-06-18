@@ -7,11 +7,11 @@ println(ten_usd.toRupees) // compile error: value toRupees is not a member of th
 
 // Money client
 // ------------
-class MoneyConverter(val money: Money) {
-  def toRupees: Money = new Money(money.amount * 50, "INR")
+class MoneyExchange(val money: Money) {
+  def toRupees = new Money(money.amount * 50, "INR")
 }
 
-implicit def moneyToMoneyConverter(money: Money): MoneyConverter = new MoneyConverter(money)
+implicit def moneyToMoneyExchange(money: Money) = new MoneyExchange(money)
 
 val ten_usd = new Money(10, "USD")
 println(ten_usd.toRupees) // Money(500.0,INR)

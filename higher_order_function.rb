@@ -14,4 +14,4 @@ def best_footballer_in_the_world
   yield "Lionel"
 end
 
-best_footballer_in_the_world { |name| puts name }
+best_footballer_in_the_world { |name| puts name } # Lionel
