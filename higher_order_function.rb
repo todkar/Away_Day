@@ -9,3 +9,9 @@ def say_hello
 end
 
 do_it(method(:say_hello)) # Method as parameter - Hello World!
+
+def best_footballer_in_the_world
+  yield "Lionel"
+end
+
+best_footballer_in_the_world { |name| puts name }
