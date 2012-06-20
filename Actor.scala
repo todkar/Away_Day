@@ -1,28 +1,76 @@
 import scala.actors.Actor
 import scala.actors.Actor._
 
-case class BusinessRequirement(objective: String)
+sealed abstract class Message
+case class BusinessRequirement(objective: String) extends Message
+case class Story(requirement: BusinessRequirement) extends Message
+case class Code(story: Story) extends Message
 
-class BusinessAnalyst(val name: String) extends Actor {
+class BusinessAnalyst(val developer: Developer) extends Actor {
   def act() {
     loop {
       react {
-        // case requirement: BusinessRequirement => analyze(requirement)
-        case BusinessRequirement(objective) => println(objective)
-        case "STOP" => exit()
+        case requirement: BusinessRequirement => analyze(requirement)
+        case "STOP" => goHome()
       }
     }
   }
 
   def analyze(requirement: BusinessRequirement) = {
-    println(requirement.objective)
+    val story = Story(requirement)
+    developer ! story
+  }
+
+  def goHome() = {
+    developer ! "STOP"
+    exit()
   }
 }
 
-object ProductOwner extends App {
-  val requirement = BusinessRequirement("To make the best bread in the world!")
-  val ba1 = new BusinessAnalyst("ba1")
-  ba1.start
-  ba1 ! requirement
-  ba1 ! "STOP"
+class Developer(val buildBox: BuildBox) extends Actor {
+  def act() {
+    loop {
+      react {
+        case story: Story => program(story)
+        case "STOP" => goHome()
+      }
+    }
+  }
+
+  def program(story: Story) = {
+    val code = Code(story)
+    buildBox ! code
+  }
+
+  def goHome() = {
+    buildBox ! "STOP"
+    exit
+  }
 }
+
+class BuildBox extends Actor {
+  def act() {
+    loop {
+      react {
+        case code: Code => deploy(code)
+        case "STOP" => exit()
+      }
+    }
+  }
+
+  def deploy(code: Code) = {
+    val objective = code.story.requirement.objective
+    println("The code for the business objective [" + objective + "] has now been deployed to production")
+  }
+}
+
+val buildBox = new BuildBox
+val developer = new Developer(buildBox)
+val businessAnalyst = new BusinessAnalyst(developer)
+buildBox.start
+developer.start
+businessAnalyst.start
+
+val requirement = BusinessRequirement("To make the best bread in the world!")
+businessAnalyst ! requirement
+businessAnalyst ! "STOP"
