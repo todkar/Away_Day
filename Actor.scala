@@ -11,7 +11,7 @@ class BusinessAnalyst(val developer: Developer) extends Actor {
     loop {
       react {
         case requirement: BusinessRequirement => analyze(requirement)
-        case "STOP" => goHome()
+        case "stop" => goHome()
       }
     }
   }
@@ -22,7 +22,7 @@ class BusinessAnalyst(val developer: Developer) extends Actor {
   }
 
   def goHome() = {
-    developer ! "STOP"
+    developer ! "stop"
     exit()
   }
 }
@@ -32,7 +32,7 @@ class Developer(val buildBox: BuildBox) extends Actor {
     loop {
       react {
         case story: Story => program(story)
-        case "STOP" => goHome()
+        case "stop" => goHome()
       }
     }
   }
@@ -43,7 +43,7 @@ class Developer(val buildBox: BuildBox) extends Actor {
   }
 
   def goHome() = {
-    buildBox ! "STOP"
+    buildBox ! "stop"
     exit
   }
 }
@@ -53,7 +53,7 @@ class BuildBox extends Actor {
     loop {
       react {
         case code: Code => deploy(code)
-        case "STOP" => exit()
+        case "stop" => exit()
       }
     }
   }
@@ -73,4 +73,4 @@ businessAnalyst.start
 
 val requirement = BusinessRequirement("To make the best bread in the world!")
 businessAnalyst ! requirement
-businessAnalyst ! "STOP"
+businessAnalyst ! "stop"
