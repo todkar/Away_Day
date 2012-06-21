@@ -44,7 +44,7 @@ class Developer(val buildBox: BuildBox) extends Actor {
 
   def goHome() = {
     buildBox ! "stop"
-    exit
+    exit()
   }
 }
 
@@ -60,7 +60,7 @@ class BuildBox extends Actor {
 
   def deploy(code: Code) = {
     val objective = code.story.requirement.objective
-    println("The code for the business objective [" + objective + "] has now been deployed to production")
+    println("The code for the business objective [" + objective + "] has now been deployed to production!")
   }
 }
 
