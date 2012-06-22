@@ -1,6 +1,6 @@
 object DoIt {
   def sayHello(name: String) = {
-    println("Hello " + name) 
+    println("Hello " + name)
   }
 }
 
